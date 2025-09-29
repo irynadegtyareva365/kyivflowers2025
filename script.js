@@ -11,7 +11,11 @@ const flowers = [
     { id: 10, name: 'Гвоздики', description: 'Класичний букет гвоздик для свят.', price: 280, image: 'https://images.pexels.com/photos/894753/pexels-photo-894753.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' }
 ];
 
-let cart = [];
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
 
 if (document.getElementById('gallery')) {
     const gallery = document.getElementById('gallery');
@@ -31,12 +35,23 @@ if (document.getElementById('gallery')) {
 
 function addToCart(id) {
     const flower = flowers.find(f => f.id === id);
-    cart.push(flower);
-    updateCart();
+    const quantity = parseInt(prompt(`Введіть кількість для "${flower.name}" (за замовчуванням 1):`, '1')) || 1;
+    if (quantity > 0) {
+        const existingItem = cart.find(item => item.flower.id === id);
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        } else {
+            cart.push({ flower, quantity });
+        }
+        saveCart();
+        alert(`${flower.name} x ${quantity} додано до кошика!`);
+        updateCart();
+    }
 }
 
 function removeFromCart(index) {
     cart.splice(index, 1);
+    saveCart();
     updateCart();
 }
 
@@ -46,10 +61,11 @@ function updateCart() {
         cartItems.innerHTML = '';
         let total = 0;
         cart.forEach((item, index) => {
+            const subtotal = item.flower.price * item.quantity;
             const div = document.createElement('div');
-            div.innerHTML = `<p>${item.name} - ${item.price} грн <button onclick="removeFromCart(${index})">Видалити</button></p>`;
+            div.innerHTML = `<p>${item.flower.name} - ${item.quantity} шт. x ${item.flower.price} грн = ${subtotal} грн <button onclick="removeFromCart(${index})">Видалити</button></p>`;
             cartItems.appendChild(div);
-            total += item.price;
+            total += subtotal;
         });
         document.getElementById('total').textContent = total;
     }
@@ -59,8 +75,10 @@ if (document.getElementById('order-form')) {
     document.getElementById('order-form').addEventListener('submit', function(e) {
         e.preventDefault();
         if (cart.length > 0) {
-            alert('Замовлення прийнято! Дякуємо за покупку. Ваше замовлення: ' + cart.map(item => item.name).join(', '));
+            const orderList = cart.map(item => `${item.flower.name} x ${item.quantity}`).join(', ');
+            alert(`Замовлення прийнято! Дякуємо за покупку. Ваше замовлення: ${orderList}`);
             cart = [];
+            saveCart();
             updateCart();
         } else {
             alert('Кошик порожній!');
