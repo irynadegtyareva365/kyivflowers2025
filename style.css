@@ -56,12 +56,18 @@ footer {
     border: 1px solid #eee;
     border-radius: 5px;
     text-align: center;
+    transition: transform 0.3s;
+}
+
+.product:hover {
+    transform: scale(1.05);
 }
 
 .product img {
     width: 200px;
     height: 200px;
     object-fit: cover;
+    border-radius: 5px;
 }
 
 button {
@@ -70,6 +76,12 @@ button {
     border: none;
     padding: 10px;
     cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #b84a75;
 }
 
 form {
@@ -82,4 +94,21 @@ input {
     width: 100%;
     margin: 10px 0;
     padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    justify-items: center;
+}
+
+.banner {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border-radius: 10px;
 }
