@@ -35,14 +35,19 @@ function addToCart(id) {
     updateCart();
 }
 
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCart();
+}
+
 function updateCart() {
     if (document.getElementById('cart-items')) {
         const cartItems = document.getElementById('cart-items');
         cartItems.innerHTML = '';
         let total = 0;
-        cart.forEach(item => {
+        cart.forEach((item, index) => {
             const div = document.createElement('div');
-            div.innerHTML = `<p>${item.name} - ${item.price} грн</p>`;
+            div.innerHTML = `<p>${item.name} - ${item.price} грн <button onclick="removeFromCart(${index})">Видалити</button></p>`;
             cartItems.appendChild(div);
             total += item.price;
         });
@@ -54,7 +59,7 @@ if (document.getElementById('order-form')) {
     document.getElementById('order-form').addEventListener('submit', function(e) {
         e.preventDefault();
         if (cart.length > 0) {
-            alert('Замовлення прийнято! Дякуємо за покупку.');
+            alert('Замовлення прийнято! Дякуємо за покупку. Ваше замовлення: ' + cart.map(item => item.name).join(', '));
             cart = [];
             updateCart();
         } else {
